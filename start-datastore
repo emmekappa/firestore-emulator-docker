@@ -6,8 +6,8 @@ if [[ -z "${DATASTORE_PROJECT_ID}" ]]; then
   exit 1
 fi
 
-if [[ -z "${DATASTORE_LISTEN_ADDRESS}" ]]; then
-  echo "Missing DATASTORE_LISTEN_ADDRESS environment variable" >&2
+if [[ -z "${DATASTORE_LISTEN_PORT}" ]]; then
+  echo "Missing DATASTORE_LISTEN_PORT environment variable" >&2
   exit 1
 fi
 
@@ -42,5 +42,5 @@ gcloud config set project ${DATASTORE_PROJECT_ID}
 # Start emulator
 gcloud beta emulators datastore start \
   --data-dir=/opt/data \
-  --host-port=${DATASTORE_LISTEN_ADDRESS} \
+  --host-port=0.0.0.0:${DATASTORE_LISTEN_PORT} \
   ${options}
