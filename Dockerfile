@@ -14,5 +14,7 @@ COPY start-datastore .
 
 EXPOSE 8081
 ENV DATASTORE_LISTEN_PORT 8081
+ENV CONSISTENCY 0.9
+ENV STORE_ON_DISK false
 HEALTHCHECK --start-period=5s --interval=10s --retries=4 CMD curl --fail http://localhost:8081/ || exit 1
 ENTRYPOINT ["/app/start-datastore"]

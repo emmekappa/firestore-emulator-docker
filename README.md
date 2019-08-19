@@ -2,11 +2,20 @@
 
 A [Google Cloud Datastore Emulator](https://cloud.google.com/datastore/docs/tools/datastore-emulator/) container image. The image is meant to be used for creating an standalone emulator for testing.
 
-## Environment
+## Environment variables
 
 The following environment variables must be set:
 
 - `DATASTORE_PROJECT_ID`: The ID of the Google Cloud project for the emulator.
+
+### Emulator options
+
+The following environment variables are used to control emulator options:
+
+- `CONSISTENCY` (default: `0.9`)
+- `STORE_ON_DISK` (default: `false`, if `true` the data will be stored in `/opt/data`)
+
+For detail please see: https://cloud.google.com/sdk/gcloud/reference/beta/emulators/datastore/start
 
 ## Connect application with the emulator
 
@@ -26,13 +35,6 @@ By default, the following command is called:
 ```sh
 start-datastore
 ```
-### Starting an emulator with options
-
-This image comes with the following options: `--no-store-on-disk` and `--consistency`. Check [Datastore Emulator Start](https://cloud.google.com/sdk/gcloud/reference/beta/emulators/datastore/start). `--legacy`, `--data-dir` and `--host-port` are not supported by this image.
-
-```sh
-start-datastore --no-store-on-disk --consistency=1.0
-```
 
 ## Creating a Datastore emulator with Docker Compose
 
@@ -46,6 +48,7 @@ services:
     image: singularities/datastore-emulator
     environment:
       - DATASTORE_PROJECT_ID=project-test
+      - CONSISTENCY=1.0
     ports:
       - "8081:8081"
 ```
@@ -53,3 +56,4 @@ services:
 ### Persistence
 
 The image has a volume mounted at `/opt/data`. To maintain states between restarts, mount a volume at this location.
+

@@ -11,36 +11,24 @@ if [[ -z "${DATASTORE_LISTEN_PORT}" ]]; then
   exit 1
 fi
 
-options=${options:1}
-# Check for datastore options
-while [ ! $# -eq 0 ]
-do
-  case "$1" in
-    --store-on-disk)
-      options="$options --store-on-disk"
-      shift
-      ;;
-    --no-store-on-disk)
-      options="$options --no-store-on-disk"
-      shift
-      ;;
-    --consistency=*)
-      consistency=${1#*=}
-      options="$options --consistency=$consistency"
-      shift
-      ;;
-    *)
-      echo "Invalid option: $1. Use: --store-on-disk, --no-store-on-disk, --consistency=[0.0-1.0]"
-      exit 1
-      ;;
-  esac
-done
+options=""
+
+if [[ -n "${CONSISTENCY}" ]]; then
+  options="$options --consistency=${CONSISTENCY}"
+fi
+
+if [[ "${STORE_ON_DISK}" == "true" ]]; then
+  options="$options --store-on-disk --data-dir=/opt/data"
+else
+  options="$options --no-store-on-disk"
+fi
 
 # Config gcloud project
 gcloud config set project ${DATASTORE_PROJECT_ID}
 
+echo "Starting datastore emulator with the following options: '$options'"
+
 # Start emulator
 gcloud beta emulators datastore start \
-  --data-dir=/opt/data \
   --host-port=0.0.0.0:${DATASTORE_LISTEN_PORT} \
   ${options}
