@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [[ -z "${FIRESTORE_LISTEN_PORT}" ]]; then
+  echo "Missing FIRESTORE_LISTEN_PORT environment variable" >&2
+  exit 1
+fi
+
+options=""
+
+echo "Starting firestore emulator with the following options: '$options'"
+
+# Start emulator
+gcloud beta emulators firestore start \
+  --host-port=0.0.0.0:${FIRESTORE_LISTEN_PORT} \
+  ${options}

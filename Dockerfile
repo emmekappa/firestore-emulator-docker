@@ -1,20 +1,16 @@
 ARG GCLOUD_SDK_VERSION=258.0.0-alpine
 FROM google/cloud-sdk:$GCLOUD_SDK_VERSION
+ARG LISTEN_PORT=8080
+RUN echo will listen on $LISTEN_PORT
 
-# Install Java 8 for Datastore emulator
 RUN apk add --update --no-cache openjdk8-jre &&\
-    gcloud components install cloud-datastore-emulator beta --quiet
-
-# Volume to persist Datastore data
-VOLUME /opt/data
+    gcloud components install cloud-firestore-emulator beta --quiet
 
 WORKDIR /app
 
-COPY start-datastore .
+COPY start-firestore .
 
-EXPOSE 8081
-ENV DATASTORE_LISTEN_PORT 8081
-ENV CONSISTENCY 0.9
-ENV STORE_ON_DISK false
-HEALTHCHECK --start-period=5s --interval=10s --retries=4 CMD curl --fail http://localhost:8081/ || exit 1
-ENTRYPOINT ["/app/start-datastore"]
+EXPOSE $LISTEN_PORT
+ENV FIRESTORE_LISTEN_PORT $LISTEN_PORT
+HEALTHCHECK --start-period=5s --interval=10s --retries=4 CMD curl --fail http://localhost:$FIRESTORE_LISTEN_PORT/ || exit 1
+ENTRYPOINT ["/app/start-firestore"]
